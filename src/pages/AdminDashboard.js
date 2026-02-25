@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import Navbar from '../components/Navbar';
+import { toast } from 'react-toastify';
 
 const AdminDashboard = () => {
     const { user } = useSelector((state) => state.auth);
@@ -21,6 +22,7 @@ const AdminDashboard = () => {
             setQuestions(res.data.data);
         } catch (error) {
             console.error(error);
+            toast.error('Failed to load questions from server');
         }
     };
 
@@ -42,13 +44,15 @@ const AdminDashboard = () => {
         try {
             if (editId) {
                 await axios.put(`https://quiz-app-be-six.vercel.app/questions/${editId}`, payload, axiosConfig);
+                toast.success('Question updated successfully!');
             } else {
                 await axios.post('https://quiz-app-be-six.vercel.app/questions', payload, axiosConfig);
+                toast.success('Question added successfully!');
             }
             fetchQuestions();
             resetForm();
         } catch (err) {
-            alert('Operation failed! Check console.');
+            toast.error('Operation failed! Check console.');
             console.error(err);
         }
     };
@@ -64,9 +68,10 @@ const AdminDashboard = () => {
         if(window.confirm('Are you sure you want to delete this question?')){
             try {
                 await axios.delete(`https://quiz-app-be-six.vercel.app/questions/${id}`, axiosConfig);
+                toast.success('Question deleted successfully!');
                 fetchQuestions();
             } catch (err) {
-                alert('Failed to delete');
+                toast.error('Failed to delete question!');
             }
         }
     };

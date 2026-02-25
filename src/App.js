@@ -5,13 +5,15 @@ import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 import Quiz from './pages/Quiz';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const { user } = useSelector((state) => state.auth);
 
   return (
     <Router>
       <div className="container mt-5">
+        <ToastContainer position="top-right" autoClose={3000} />
         <Routes>
           <Route path="/login" element={!user ? <Login /> : <Navigate to={user.admin ? "/admin" : "/dashboard"} />} />
           <Route path="/register" element={!user ? <Register /> : <Navigate to={user.admin ? "/admin" : "/dashboard"} />} />
