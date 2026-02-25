@@ -64,16 +64,47 @@ const AdminDashboard = () => {
         setCorrectAnswerIndex(q.correctAnswerIndex);
     };
 
-    const handleDelete = async (id) => {
-        if(window.confirm('Are you sure you want to delete this question?')){
-            try {
-                await axios.delete(`https://quiz-app-be-six.vercel.app/questions/${id}`, axiosConfig);
-                toast.success('Question deleted successfully!');
-                fetchQuestions();
-            } catch (err) {
-                toast.error('Failed to delete question!');
-            }
+    // Tách logic xóa thật sự ra một hàm riêng
+    const executeDelete = async (id) => {
+        try {
+            await axios.delete(`https://quiz-app-be-six.vercel.app/questions/${id}`, axiosConfig);
+            toast.success('Question deleted successfully!');
+            fetchQuestions();
+        } catch (err) {
+            toast.error('Failed to delete question!');
         }
+    };
+
+    // Hàm handleDelete giờ sẽ gọi một Toast chứa nút bấm
+    const handleDelete = (id) => {
+        const ConfirmToast = ({ closeToast }) => (
+            <div>
+                <p className="mb-2 fw-bold text-dark">Are you sure you want to delete this question?</p>
+                <button 
+                    className="btn btn-danger btn-sm me-2" 
+                    onClick={() => { 
+                        executeDelete(id); 
+                        closeToast(); 
+                    }}
+                >
+                    Yes, Delete
+                </button>
+                <button 
+                    className="btn btn-secondary btn-sm" 
+                    onClick={closeToast}
+                >
+                    Cancel
+                </button>
+            </div>
+        );
+
+        toast.warn(<ConfirmToast />, {
+            position: "top-center",
+            autoClose: false, // Không tự động đóng, bắt buộc user phải bấm
+            closeOnClick: false,
+            draggable: false,
+            theme: "light",
+        });
     };
 
     const resetForm = () => {
